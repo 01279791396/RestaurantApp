@@ -6,11 +6,13 @@ using RestaurantApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Services ---
+// --- Services Configuration ---
 
+// 1. DbContext Setup
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// 2. Identity Setup
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 6;
@@ -24,6 +26,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// 3. Cookie Setup
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -32,10 +35,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// 4. MVC Controllers & Views
 builder.Services.AddControllersWithViews();
 
+// 5. External Services
 builder.Services.AddHttpClient<IWhatsAppNotifier, WhatsAppNotifier>();
 
+// 6. Caching & Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -46,27 +52,10 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// تفعيل شاشة الأخطاء التفصيلية دائماً لجميع البيئات لمساعدتنا في معالجة أي استثناء صريح
-app.UseDeveloperExceptionPage();
+// --- HTTP Request Pipeline Configuration ---
 
-// تعطيل محاولة الـ Migrate والـ Seed التلقائية أثناء إقلاع التطبيق مؤقتاً لتجنب انهيار السيرفر
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var dbContext = services.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
-        await DbInitializer.SeedAsync(services, app.Configuration);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "حدث خطأ أثناء تهيئة قاعدة البيانات.");
-    }
-}
-*/
+// تفعيل شاشة الأخطاء للتطوير لعرض السبب الحقيقي إن وجد بدلاً من إغلاق السيرفر
+app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -78,10 +67,12 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map Area Routes (Admin, Delivery)
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
+// Map Default Route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
