@@ -55,10 +55,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        //dbContext.Database.Migrate();
 
         // دمج الـ Seeding هنا بعد تطبيق الـ Migration مباشرة
-        await DbInitializer.SeedAsync(services, app.Configuration);
+       // await DbInitializer.SeedAsync(services, app.Configuration);
     }
     catch (Exception ex)
     {
