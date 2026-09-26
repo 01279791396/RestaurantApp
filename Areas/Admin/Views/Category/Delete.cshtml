@@ -1,0 +1,26 @@
+@model Category
+@{
+    ViewData["Title"] = "حذف قسم";
+}
+
+<h1>حذف القسم</h1>
+
+<div class="alert alert-warning">
+    متأكد إنك عايز تمسح قسم "<strong>@Model.Name</strong>"؟
+</div>
+
+@if (Model.MenuItems.Any())
+{
+    <div class="alert alert-danger">
+        مينفعش تمسح القسم ده لأنه فيه @Model.MenuItems.Count صنف بداخله. امسح أو انقل الأصناف دي الأول.
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">رجوع</a>
+}
+else
+{
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
+        <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+    </form>
+}

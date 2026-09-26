@@ -1,0 +1,79 @@
+@model MenuItemFormViewModel
+@{
+    ViewData["Title"] = "تعديل صنف";
+}
+
+<h1>تعديل الصنف</h1>
+
+@if (Model.HasSizes)
+{
+    <div class="alert alert-info">
+        الصنف ده عنده مقاسات، فالسعر وسعر الخصم وسعر العميل المميز تحت دول <strong>مش هيتاخدوا في الاعتبار</strong> —
+        الأسعار الفعلية بتتحدد من صفحة <a asp-controller="MenuItemSize" asp-action="Index" asp-route-menuItemId="@Model.Id">إدارة المقاسات</a>.
+    </div>
+}
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DiscountedPrice" class="form-label"></label>
+        <input asp-for="DiscountedPrice" class="form-control" placeholder="سيبه فاضي لو مفيش عرض" />
+        <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="VipPrice" class="form-label"></label>
+        <input asp-for="VipPrice" class="form-control" placeholder="سيبه فاضي لو الصنف مالوش سعر مميز" />
+        <span asp-validation-for="VipPrice" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" asp-items="Model.CategoryOptions" class="form-select"></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
+    {
+        <div class="mb-2">
+            <img src="~/images/menu/@Model.ExistingImagePath" style="width:100px;height:100px;object-fit:cover" class="rounded" />
+        </div>
+    }
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">صورة جديدة (اختياري، هتستبدل القديمة)</label>
+        <input asp-for="Image" type="file" accept=".jpg,.jpeg,.jfif,.png,.webp,image/*" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsAvailable" class="form-check-input" />
+        <label asp-for="IsAvailable" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+    <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

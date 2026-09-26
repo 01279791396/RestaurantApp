@@ -1,0 +1,27 @@
+{
+  "name": "بابا المجال",
+  "short_name": "بابا المجال",
+  "description": "اطلب من المنيو، تابع أوردرك، وكل حاجة تخص المطعم في مكان واحد",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#16110B",
+  "theme_color": "#16110B",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+@model List<Order>
+@{
+    ViewData["Title"] = "أوردراتي";
+    string StatusText(OrderStatus s) => s switch
+    {
+        OrderStatus.Pending => "قيد الانتظار",
+        OrderStatus.Accepted => "تم القبول",
+        OrderStatus.Preparing => "جاري التحضير",
+        OrderStatus.OutForDelivery => "مع مندوب التوصيل",
+        OrderStatus.Delivered => "تم التسليم",
+        OrderStatus.Cancelled => "ملغي",
+        _ => s.ToString()
+    };
+    string BadgeClass(OrderStatus s) => s switch
+    {
+        OrderStatus.Delivered => "bg-success",
+        OrderStatus.Cancelled => "bg-danger",
+        OrderStatus.Pending => "bg-secondary",
+        _ => "bg-warning text-dark"
+    };
+}
+
+<h1 class="mb-4">أوردراتي</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">لسه معملتش أي أوردر. <a asp-controller="Menu" asp-action="Index">اطلب دلوقتي</a></div>
+}
+else
+{
+    <div class="card p-3">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>رقم الفاتورة</th>
+                    <th>التاريخ</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.InvoiceNumber</td>
+                        <td>@order.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="fw-bold">@order.GrandTotal.ToString("0.00") ج.م</td>
+                        <td><span class="badge @BadgeClass(order.Status)">@StatusText(order.Status)</span></td>
+                        <td><a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">التفاصيل</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

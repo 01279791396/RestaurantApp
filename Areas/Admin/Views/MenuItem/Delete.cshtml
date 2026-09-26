@@ -1,0 +1,27 @@
+@model MenuItem
+@{
+    ViewData["Title"] = "حذف صنف";
+}
+
+<h1>حذف الصنف</h1>
+
+<div class="alert alert-warning">
+    متأكد إنك عايز تمسح "<strong>@Model.Name</strong>"؟
+</div>
+
+@if ((bool)ViewBag.HasOrders)
+{
+    <div class="alert alert-danger">
+        الصنف ده ليه أوردرات سابقة، فمينفعش يتمسح نهائي (عشان تفضل الفواتير القديمة صحيحة).
+        تقدر بدل كده تخليه "غير متاح" من صفحة المنيو.
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">رجوع</a>
+}
+else
+{
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
+        <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+    </form>
+}

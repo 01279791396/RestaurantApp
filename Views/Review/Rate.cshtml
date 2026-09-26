@@ -1,0 +1,32 @@
+@model RateItemViewModel
+@{
+    ViewData["Title"] = "تقييم الصنف";
+}
+
+<h1 class="mb-4">تقييم "@Model.MenuItemName"</h1>
+
+<form asp-action="Rate" method="post" class="col-md-5">
+    <input type="hidden" asp-for="MenuItemId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label"></label>
+        <select asp-for="Rating" class="form-select">
+            <option value="5">⭐⭐⭐⭐⭐ ممتاز</option>
+            <option value="4">⭐⭐⭐⭐ كويس جدًا</option>
+            <option value="3">⭐⭐⭐ كويس</option>
+            <option value="2">⭐⭐ مقبول</option>
+            <option value="1">⭐ مش عاجبني</option>
+        </select>
+        <span asp-validation-for="Rating" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">إرسال التقييم</button>
+    <a asp-controller="Order" asp-action="MyOrders" class="btn btn-secondary">إلغاء</a>
+</form>

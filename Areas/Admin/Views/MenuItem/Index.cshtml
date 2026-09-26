@@ -1,0 +1,76 @@
+@model List<MenuItem>
+@{
+    ViewData["Title"] = "إدارة المنيو";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>إدارة المنيو</h1>
+    <a asp-action="Create" class="btn btn-primary">+ إضافة صنف</a>
+</div>
+
+<div class="card p-3">
+    <table class="table mb-0 table-striped align-middle">
+    <thead>
+        <tr>
+            <th>الصورة</th>
+            <th>الاسم</th>
+            <th>القسم</th>
+            <th>السعر</th>
+            <th>الحالة</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="width:70px">
+                    <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/menu/placeholder.png" : "/images/menu/" + item.ImagePath)"
+                         style="width:60px;height:60px;object-fit:cover" class="rounded" />
+                </td>
+                <td>@item.Name</td>
+                <td>@item.Category?.Name</td>
+                <td>
+                    @if (item.HasSizes)
+                    {
+                        <span class="badge" style="background-color:var(--color-accent-dark)">@item.Sizes.Count مقاس</span>
+                        <div class="small text-muted">من @item.Sizes.Min(s => s.Price).ToString("0.00") ج.م</div>
+                    }
+                    else
+                    {
+                        <span>@item.Price.ToString("0.00") ج.م</span>
+                        @if (item.DiscountedPrice.HasValue)
+                        {
+                            <br /><span class="badge bg-danger">عرض: @item.DiscountedPrice.Value.ToString("0.00")</span>
+                        }
+                        @if (item.VipPrice.HasValue)
+                        {
+                            <br /><span class="badge bg-dark">مميز: @item.VipPrice.Value.ToString("0.00")</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (item.IsAvailable)
+                    {
+                        <span class="badge bg-success">متاح</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">غير متاح</span>
+                    }
+                </td>
+                <td class="text-nowrap">
+                    <form asp-action="ToggleAvailability" asp-route-id="@item.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                            @(item.IsAvailable ? "إخفاء" : "إظهار")
+                        </button>
+                    </form>
+                    <a asp-controller="MenuItemSize" asp-action="Index" asp-route-menuItemId="@item.Id" class="btn btn-sm btn-outline-primary">المقاسات</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+    </div>

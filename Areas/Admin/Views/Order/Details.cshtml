@@ -1,0 +1,116 @@
+@model AdminOrderDetailsViewModel
+@{
+    ViewData["Title"] = "تفاصيل الأوردر";
+    var order = Model.Order;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>فاتورة @order.InvoiceNumber</h1>
+    <span class="badge bg-info fs-6">@order.Status</span>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">العميل</dt>
+    <dd class="col-sm-9">@order.Customer?.FullName — @order.PhoneNumber</dd>
+
+    <dt class="col-sm-3">عنوان التوصيل</dt>
+    <dd class="col-sm-9">@order.DeliveryAddress</dd>
+
+    @if (!string.IsNullOrEmpty(order.Notes))
+    {
+        <dt class="col-sm-3">ملاحظات</dt>
+        <dd class="col-sm-9">@order.Notes</dd>
+    }
+
+    <dt class="col-sm-3">الدفع</dt>
+    <dd class="col-sm-9">كاش عند الاستلام — @(order.IsPaid ? "تم التحصيل" : "لسه معلق")</dd>
+
+    @if (!string.IsNullOrEmpty(order.DeliveryPersonName))
+    {
+        <dt class="col-sm-3">مندوب التوصيل</dt>
+        <dd class="col-sm-9">@order.DeliveryPersonName — @order.DeliveryPersonPhone (مصاريف توصيل: @order.DeliveryFee.ToString("0.00") ج.م)</dd>
+    }
+</dl>
+
+<table class="table">
+    <thead>
+        <tr><th>الصنف</th><th>السعر</th><th>الكمية</th><th>الإجمالي</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var item in order.OrderItems)
+        {
+            <tr>
+                <td>@item.ItemNameAtOrderTime@(item.SizeNameAtOrderTime != null ? $" ({item.SizeNameAtOrderTime})" : "")</td>
+                <td>@item.UnitPriceAtOrderTime.ToString("0.00") ج.م</td>
+                <td>@item.Quantity</td>
+                <td>@item.LineTotal.ToString("0.00") ج.م</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr><th colspan="3" class="text-end">إجمالي الأصناف</th><th>@order.TotalPrice.ToString("0.00") ج.م</th></tr>
+        @if (order.DiscountAmount > 0)
+        {
+            <tr><th colspan="3" class="text-end">خصم@(string.IsNullOrEmpty(order.CouponCode) ? "" : $" ({order.CouponCode})")</th><th>- @order.DiscountAmount.ToString("0.00") ج.م</th></tr>
+        }
+        @if (order.DeliveryFee > 0)
+        {
+            <tr><th colspan="3" class="text-end">مصاريف التوصيل</th><th>@order.DeliveryFee.ToString("0.00") ج.م</th></tr>
+        }
+        @if (order.DeliveryFee > 0 || order.DiscountAmount > 0)
+        {
+            <tr><th colspan="3" class="text-end">الإجمالي الكلي</th><th>@order.GrandTotal.ToString("0.00") ج.م</th></tr>
+        }
+    </tfoot>
+</table>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a asp-action="PrintInvoice" asp-route-id="@order.Id" target="_blank" class="btn btn-outline-dark">🖨️ طباعة الفاتورة</a>
+
+    @if (order.Status == OrderStatus.Pending)
+    {
+        <form asp-action="Accept" asp-route-id="@order.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-primary">قبول الأوردر</button>
+        </form>
+        <form asp-action="Cancel" asp-route-id="@order.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger">إلغاء</button>
+        </form>
+    }
+    else if (order.Status == OrderStatus.Accepted)
+    {
+        <form asp-action="StartPreparing" asp-route-id="@order.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-primary">بدء التحضير</button>
+        </form>
+        <form asp-action="Cancel" asp-route-id="@order.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger">إلغاء</button>
+        </form>
+    }
+    else if (order.Status == OrderStatus.Preparing)
+    {
+        <form asp-action="AssignDelivery" asp-route-id="@order.Id" method="post" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label">اسم مندوب التوصيل</label>
+                <input type="text" name="deliveryPersonName" class="form-control" required />
+            </div>
+            <div class="col-auto">
+                <label class="form-label">رقم موبايله</label>
+                <input type="text" name="deliveryPersonPhone" class="form-control" required />
+            </div>
+            <div class="col-auto">
+                <label class="form-label">مصاريف التوصيل</label>
+                <input type="number" name="deliveryFee" class="form-control" step="0.01" min="0" value="0" style="width:120px" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">إسناد للتوصيل</button>
+            </div>
+        </form>
+    }
+    else if (order.Status == OrderStatus.OutForDelivery)
+    {
+        <form asp-action="MarkDelivered" asp-route-id="@order.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-success">تأكيد التسليم (استلمت مصاريف التوصيل)</button>
+        </form>
+    }
+</div>
+
+<a asp-action="Index" class="btn btn-link">رجوع لكل الأوردرات</a>

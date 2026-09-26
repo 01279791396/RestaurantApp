@@ -1,0 +1,52 @@
+@model CouponFormViewModel
+@{
+    ViewData["Title"] = "إضافة كود خصم";
+}
+
+<h1>إضافة كود خصم</h1>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control text-uppercase" placeholder="مثال: WELCOME10" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DiscountType" class="form-label"></label>
+        <select asp-for="DiscountType" class="form-select" asp-items="Html.GetEnumSelectList<DiscountType>()"></select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Value" class="form-label"></label>
+        <input asp-for="Value" class="form-control" />
+        <span asp-validation-for="Value" class="text-danger"></span>
+        <div class="form-text">لو النوع "نسبة %" اكتب رقم من 0 لـ 100. لو "مبلغ ثابت" اكتب المبلغ بالجنيه.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MinOrderAmount" class="form-label"></label>
+        <input asp-for="MinOrderAmount" class="form-control" placeholder="سيبه فاضي لو من غير حد أدنى" />
+        <span asp-validation-for="MinOrderAmount" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ExpiresAt" class="form-label"></label>
+        <input asp-for="ExpiresAt" class="form-control" />
+        <span asp-validation-for="ExpiresAt" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">حفظ</button>
+    <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,54 @@
+@model List<ApplicationUser>
+@{
+    ViewData["Title"] = "العملاء";
+}
+
+<h1 class="mb-4">العملاء</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">لسه مفيش عملاء مسجلين.</div>
+}
+else
+{
+    <div class="card p-3">
+    <table class="table mb-0 align-middle">
+        <thead>
+            <tr>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم الموبايل</th>
+                <th>الحالة</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.FullName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>
+                        @if (customer.IsVip)
+                        {
+                            <span class="badge bg-dark">عميل مميز 👑</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-light text-dark">عادي</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="ToggleVip" asp-route-id="@customer.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm @(customer.IsVip ? "btn-outline-secondary" : "btn-outline-dark")">
+                                @(customer.IsVip ? "إلغاء التميز" : "خليه عميل مميز")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}

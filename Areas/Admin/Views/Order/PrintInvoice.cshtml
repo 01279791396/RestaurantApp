@@ -1,0 +1,84 @@
+@model Order
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>فاتورة @Model.InvoiceNumber</title>
+    <style>
+        body { font-family: "Segoe UI", Tahoma, Arial, sans-serif; margin: 24px; color: #111; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 16px; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .header .invoice-no { font-size: 18px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+        th { background: #f2f2f2; }
+        .totals { text-align: left; font-size: 18px; font-weight: bold; margin-top: 12px; }
+        .meta { margin-top: 8px; line-height: 1.8; }
+        .print-btn { margin-bottom: 16px; }
+        @@media print {
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">🖨️ طباعة</button>
+
+    <div class="header">
+        <div>
+            <h1>🍽️ بابا المجال</h1>
+            <div>فاتورة توصيل</div>
+        </div>
+        <div class="invoice-no">
+            @Model.InvoiceNumber<br />
+            <small>@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+        </div>
+    </div>
+
+    <div class="meta">
+        <div><strong>العميل:</strong> @Model.Customer?.FullName</div>
+        <div><strong>رقم الموبايل:</strong> @Model.PhoneNumber</div>
+        <div><strong>عنوان التوصيل:</strong> @Model.DeliveryAddress</div>
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div><strong>ملاحظات:</strong> @Model.Notes</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.DeliveryPersonName))
+        {
+            <div><strong>مندوب التوصيل:</strong> @Model.DeliveryPersonName — @Model.DeliveryPersonPhone</div>
+        }
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>الصنف</th><th>السعر</th><th>الكمية</th><th>الإجمالي</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.ItemNameAtOrderTime@(item.SizeNameAtOrderTime != null ? $" ({item.SizeNameAtOrderTime})" : "")</td>
+                    <td>@item.UnitPriceAtOrderTime.ToString("0.00") ج.م</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.LineTotal.ToString("0.00") ج.م</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="totals">
+        إجمالي الأصناف: @Model.TotalPrice.ToString("0.00") ج.م<br />
+        @if (Model.DiscountAmount > 0)
+        {
+            <text>خصم@(string.IsNullOrEmpty(Model.CouponCode) ? "" : $" ({Model.CouponCode})"): - @Model.DiscountAmount.ToString("0.00") ج.م<br /></text>
+        }
+        @if (Model.DeliveryFee > 0)
+        {
+            <text>مصاريف التوصيل: @Model.DeliveryFee.ToString("0.00") ج.م<br /></text>
+        }
+        الإجمالي المطلوب تحصيله: @Model.GrandTotal.ToString("0.00") ج.م (كاش عند الاستلام)
+    </div>
+</body>
+</html>

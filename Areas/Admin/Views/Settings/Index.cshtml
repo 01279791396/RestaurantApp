@@ -1,0 +1,30 @@
+@model RestaurantSettingsViewModel
+@{
+    ViewData["Title"] = "مواعيد الشغل";
+}
+
+<h1 class="mb-4">مواعيد الشغل</h1>
+
+<form asp-action="Index" method="post" class="col-md-5">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="OpenTime" class="form-label"></label>
+        <input asp-for="OpenTime" type="time" asp-format="{0:hh\:mm}" class="form-control" />
+        <span asp-validation-for="OpenTime" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CloseTime" class="form-label"></label>
+        <input asp-for="CloseTime" type="time" asp-format="{0:hh\:mm}" class="form-control" />
+        <span asp-validation-for="CloseTime" class="text-danger"></span>
+        <div class="form-text">لو ميعاد القفل قبل ميعاد الفتح، هيتحسب إن المطعم بيشتغل لحد الفجر (عبر منتصف الليل).</div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsTemporarilyClosed" class="form-check-input" />
+        <label asp-for="IsTemporarilyClosed" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">حفظ</button>
+</form>

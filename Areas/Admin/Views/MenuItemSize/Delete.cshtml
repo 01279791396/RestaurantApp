@@ -1,0 +1,16 @@
+@model MenuItemSize
+@{
+    ViewData["Title"] = "حذف مقاس";
+}
+
+<h1>حذف المقاس</h1>
+
+<div class="alert alert-warning">
+    متأكد إنك عايز تمسح مقاس "<strong>@Model.Name</strong>" من "@Model.MenuItem?.Name"؟
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
+    <a asp-action="Index" asp-route-menuItemId="@Model.MenuItemId" class="btn btn-secondary">إلغاء</a>
+</form>

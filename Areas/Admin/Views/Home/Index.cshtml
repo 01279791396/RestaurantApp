@@ -1,0 +1,87 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+<h1 class="mb-4">لوحة التحكم</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.PendingOrdersCount</div>
+                <div class="text-muted">أوردرات قيد الانتظار</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.TodayOrdersCount</div>
+                <div class="text-muted">أوردرات النهاردة</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.TodayRevenue.ToString("0.00")</div>
+                <div class="text-muted">مبيعات النهاردة (ج.م)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.VipCustomersCount</div>
+                <div class="text-muted">عملاء مميزين 👑</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="fs-4">@Model.MenuItemsCount</div>
+                <div class="text-muted">صنف في المنيو</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="fs-4">@Model.CategoriesCount</div>
+                <div class="text-muted">قسم</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="fs-4">@Model.CustomersCount</div>
+                <div class="text-muted">عميل مسجل</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="fs-4">@Model.ActiveCouponsCount</div>
+                <div class="text-muted">كود خصم فعّال</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">إدارة سريعة</h4>
+<div class="d-flex flex-wrap gap-2">
+    <a asp-controller="Order" asp-action="Index" class="btn btn-outline-primary">الأوردرات</a>
+    <a asp-controller="Category" asp-action="Index" class="btn btn-outline-primary">الأقسام</a>
+    <a asp-controller="MenuItem" asp-action="Index" class="btn btn-outline-primary">المنيو</a>
+    <a asp-controller="Coupon" asp-action="Index" class="btn btn-outline-primary">أكواد الخصم</a>
+    <a asp-controller="Customer" asp-action="Index" class="btn btn-outline-primary">العملاء</a>
+    <a asp-controller="Reports" asp-action="Index" class="btn btn-outline-primary">التقارير</a>
+    <a asp-controller="Settings" asp-action="Index" class="btn btn-outline-primary">مواعيد الشغل</a>
+</div>

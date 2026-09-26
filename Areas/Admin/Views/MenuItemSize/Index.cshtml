@@ -1,0 +1,53 @@
+@model List<MenuItemSize>
+@{
+    var menuItem = (MenuItem)ViewBag.MenuItem;
+    ViewData["Title"] = "مقاسات " + menuItem.Name;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>مقاسات "@menuItem.Name"</h1>
+    <a asp-action="Create" asp-route-menuItemId="@menuItem.Id" class="btn btn-primary">+ إضافة مقاس</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        الصنف ده لسه من غير مقاسات — لسه شغال بسعره الأساسي (@menuItem.Price.ToString("0.00") ج.م).
+        أول ما تضيف مقاس، السعر الأساسي هيتجاهل والعميل هيختار من المقاسات دي بدل منه.
+    </div>
+}
+else
+{
+    <div class="card p-3">
+    <table class="table mb-0 align-middle">
+        <thead>
+            <tr>
+                <th>المقاس</th>
+                <th>السعر</th>
+                <th>سعر الخصم</th>
+                <th>سعر العميل المميز</th>
+                <th>ترتيب العرض</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var size in Model)
+            {
+                <tr>
+                    <td>@size.Name</td>
+                    <td>@size.Price.ToString("0.00") ج.م</td>
+                    <td>@(size.DiscountedPrice.HasValue ? size.DiscountedPrice.Value.ToString("0.00") + " ج.م" : "-")</td>
+                    <td>@(size.VipPrice.HasValue ? size.VipPrice.Value.ToString("0.00") + " ج.م 👑" : "-")</td>
+                    <td>@size.DisplayOrder</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@size.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                        <a asp-action="Delete" asp-route-id="@size.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}
+
+<a asp-controller="MenuItem" asp-action="Index" class="btn btn-link">رجوع لإدارة المنيو</a>

@@ -1,0 +1,63 @@
+@model List<Coupon>
+@{
+    ViewData["Title"] = "أكواد الخصم";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>أكواد الخصم</h1>
+    <a asp-action="Create" class="btn btn-primary">+ إضافة كود خصم</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">لسه مفيش أكواد خصم.</div>
+}
+else
+{
+    <div class="card p-3">
+    <table class="table mb-0 align-middle">
+        <thead>
+            <tr>
+                <th>الكود</th>
+                <th>النوع</th>
+                <th>القيمة</th>
+                <th>الحد الأدنى</th>
+                <th>تاريخ الانتهاء</th>
+                <th>الحالة</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var coupon in Model)
+            {
+                <tr>
+                    <td><code>@coupon.Code</code></td>
+                    <td>@(coupon.DiscountType == DiscountType.Percentage ? "نسبة %" : "مبلغ ثابت")</td>
+                    <td>@(coupon.DiscountType == DiscountType.Percentage ? $"{coupon.Value}%" : $"{coupon.Value:0.00} ج.م")</td>
+                    <td>@(coupon.MinOrderAmount.HasValue ? $"{coupon.MinOrderAmount.Value:0.00} ج.م" : "-")</td>
+                    <td>@(coupon.ExpiresAt?.ToString("yyyy-MM-dd") ?? "بدون")</td>
+                    <td>
+                        @if (coupon.IsValidNow)
+                        {
+                            <span class="badge bg-success">فعّال</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">غير فعّال</span>
+                        }
+                    </td>
+                    <td class="text-nowrap">
+                        <form asp-action="ToggleActive" asp-route-id="@coupon.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">@(coupon.IsActive ? "إيقاف" : "تفعيل")</button>
+                        </form>
+                        <a asp-action="Edit" asp-route-id="@coupon.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                        <form asp-action="Delete" asp-route-id="@coupon.Id" method="post" class="d-inline" onsubmit="return confirm('متأكد من الحذف؟');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}

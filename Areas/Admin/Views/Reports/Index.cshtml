@@ -1,0 +1,89 @@
+@model SalesReportViewModel
+@{
+    ViewData["Title"] = "تقارير المبيعات";
+}
+
+<h1 class="mb-4">تقارير المبيعات</h1>
+
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label">من</label>
+        <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">إلى</label>
+        <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">عرض</button>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.TotalOrders</div>
+                <div class="text-muted">أوردر (غير الملغي)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.CancelledOrders</div>
+                <div class="text-muted">أوردر ملغي</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.TotalRevenue.ToString("0.00")</div>
+                <div class="text-muted">إجمالي المبيعات (ج.م)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-6">@Model.TotalDiscounts.ToString("0.00")</div>
+                <div class="text-muted">إجمالي الخصومات (ج.م)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">الأكتر مبيعًا</h4>
+@if (!Model.TopItems.Any())
+{
+    <div class="alert alert-info">مفيش أوردرات في الفترة دي.</div>
+}
+else
+{
+    <div class="card p-3">
+    <table class="table mb-0 align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>الصنف</th>
+                <th>الكمية المباعة</th>
+                <th>المبيعات (ج.م)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var rank = 1; }
+            @foreach (var item in Model.TopItems)
+            {
+                <tr>
+                    <td>@rank</td>
+                    <td>@item.Name</td>
+                    <td>@item.QuantitySold</td>
+                    <td>@item.Revenue.ToString("0.00")</td>
+                </tr>
+                rank++;
+            }
+        </tbody>
+    </table>
+    </div>
+}
