@@ -56,7 +56,21 @@ var app = builder.Build();
 
 // تفعيل شاشة الأخطاء للتطوير لعرض السبب الحقيقي إن وجد بدلاً من إغلاق السيرفر
 app.UseDeveloperExceptionPage();
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+        await DbInitializer.SeedAsync(services, app.Configuration);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "حدث خطأ أثناء إنشاء قاعدة البيانات.");
+    }
+}
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
