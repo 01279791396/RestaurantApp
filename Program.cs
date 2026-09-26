@@ -48,15 +48,24 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
-
-// --- Seed roles + default admin on startup ---
+app.UseDeveloperExceptionPage();
 using (var scope = app.Services.CreateScope())
 {
-    await DbInitializer.SeedAsync(scope.ServiceProvider, app.Configuration);
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+
+        // دمج الـ Seeding هنا بعد تطبيق الـ Migration مباشرة
+        await DbInitializer.SeedAsync(services, app.Configuration);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "حدث خطأ أثناء تهيئة قاعدة البيانات.");
+    }
 }
-
-// --- Middleware pipeline ---
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
