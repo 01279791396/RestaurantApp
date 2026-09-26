@@ -12,17 +12,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    {
-        // Reasonable defaults for a small restaurant app rather than ASP.NET's very strict
-        // out-of-the-box password rules, which would frustrate non-technical restaurant staff.
-        options.Password.RequiredLength = 6;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.SignIn.RequireConfirmedAccount = false;
+{
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.SignIn.RequireConfirmedAccount = false;
 
-        options.Lockout.MaxFailedAccessAttempts = 5;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-    })
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -41,14 +39,18 @@ builder.Services.AddHttpClient<IWhatsAppNotifier, WhatsAppNotifier>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    // The cart only needs to survive one browsing session, not be permanent.
     options.IdleTimeout = TimeSpan.FromHours(6);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
 var app = builder.Build();
+
+// تفعيل شاشة الأخطاء التفصيلية دائماً لجميع البيئات لمساعدتنا في معالجة أي استثناء صريح
 app.UseDeveloperExceptionPage();
+
+// تعطيل محاولة الـ Migrate والـ Seed التلقائية أثناء إقلاع التطبيق مؤقتاً لتجنب انهيار السيرفر
+/*
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -56,8 +58,6 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-
-        // دمج الـ Seeding هنا بعد تطبيق الـ Migration مباشرة
         await DbInitializer.SeedAsync(services, app.Configuration);
     }
     catch (Exception ex)
@@ -66,11 +66,7 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "حدث خطأ أثناء تهيئة قاعدة البيانات.");
     }
 }
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+*/
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -82,8 +78,6 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Area routes (Admin, Delivery) must be registered before the default route so that,
-// e.g., /Admin/Order/Index resolves to the Admin area's OrderController.
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
