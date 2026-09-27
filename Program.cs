@@ -52,25 +52,29 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// --- HTTP Request Pipeline Configuration ---
-
-// تفعيل شاشة الأخطاء للتطوير لعرض السبب الحقيقي إن وجد بدلاً من إغلاق السيرفر
-app.UseDeveloperExceptionPage();
+// --- Database Seeding (Roles + Default Admin) ---
+// لازم يتنفذ مرة واحدة أول ما التطبيق يشتغل عشان يعمل الـ Roles وحساب الأدمن الافتراضي
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var dbContext = services.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
-        await DbInitializer.SeedAsync(services, app.Configuration);
+        await DbInitializer.SeedAsync(services, builder.Configuration);
+        // لو الميثود بتاعتك مش static أو اسمها مختلف، بدّل السطر ده بالشكل اللي كنت مستخدمه قبل كده
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "حدث خطأ أثناء إنشاء قاعدة البيانات.");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+
+// --- HTTP Request Pipeline Configuration ---
+
+// تفعيل شاشة الأخطاء للتطوير لعرض السبب الحقيقي إن وجد بدلاً من إغلاق السيرفر
+// ملحوظة مهمة: لازم يتشال السطر ده بعد ما تحل مشكلة النشر، قبل ما الموقع يبقى نهائي
+app.UseDeveloperExceptionPage();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
