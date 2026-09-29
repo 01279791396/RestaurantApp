@@ -3,9 +3,12 @@
     ViewData["Title"] = "المنيو";
 }
 
-<div class="menu-hero mb-4">
-    <div class="menu-hero-title">بابا المجال</div>
-    <div class="menu-hero-sub">مطعم أكلات شرقية وسورية — مذاق شرقي أصيل</div>
+<div class="menu-hero mb-4 text-center p-4" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/restaurant-bg.jpg') center/cover; border-radius: 12px; color: white;">
+    <!-- صورة الشعار أو الأيقونة فوق العنوان -->
+    <img src="~/icons/icon-192.png" alt="بابا المجال" style="width: 80px; height: 80px; object-fit: contain; border-radius: 50%; border: 2px solid #d4af37; margin-bottom: 15px;" />
+    
+    <div class="menu-hero-title fw-bold" style="font-size: 2rem; color: #d4af37;">بابا المجال</div>
+    <div class="menu-hero-sub mt-2" style="font-size: 1.1rem; opacity: 0.9;">مطعم أكلات شرقية وسورية — مذاق شرقي أصيل</div>
 </div>
 
 @if (!Model.IsOpen)
