@@ -1,0 +1,21 @@
+﻿@model Review
+@{
+    ViewData["Title"] = "حذف تقييم";
+}
+
+<h1>حذف التقييم</h1>
+
+<div class="alert alert-warning">
+    متأكد إنك عايز تمسح تقييم <strong>@Model.Customer?.FullName</strong> على <strong>@Model.MenuItem?.Name</strong>
+    (@(new string('⭐', Model.Rating)))؟
+    @if (!string.IsNullOrEmpty(Model.Comment))
+    {
+        <br /><em>"@Model.Comment"</em>
+    }
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
+    <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+</form>

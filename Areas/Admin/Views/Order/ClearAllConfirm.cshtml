@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "مسح كل الأوردرات";
+    var count = (int)ViewBag.OrderCount;
+}
+
+<h1>مسح كل الأوردرات</h1>
+
+<div class="alert alert-danger">
+    <strong>تحذير:</strong> الإجراء ده هيمسح <strong>@count أوردر</strong> نهائيًا من الداتابيز (وكل الأصناف جوه كل أوردر معاهم)،
+    ومش هينفع ترجعهم تاني. استخدمه بس عشان تنضف بيانات تجريبية قبل ما تبدأ شغل حقيقي.
+    <br /><br />
+    المنيو والأقسام والعملاء وأكواد الخصم <strong>مش هيتأثروا</strong> — الحذف للأوردرات بس.
+</div>
+
+<form asp-action="ClearAll" method="post">
+    <button type="submit" class="btn btn-danger">
+        أيوه، امسح كل الـ @count أوردر نهائيًا
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+</form>

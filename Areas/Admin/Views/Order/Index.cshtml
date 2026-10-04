@@ -4,7 +4,10 @@
     var selected = (OrderStatus?)ViewBag.SelectedStatus;
 }
 
-<h1 class="mb-4">الأوردرات</h1>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="mb-0">الأوردرات</h1>
+    <a asp-action="ClearAllConfirm" class="btn btn-sm btn-outline-danger">🗑️ مسح كل الأوردرات</a>
+</div>
 
 <form method="get" class="mb-3 d-flex gap-2 align-items-center">
     <label class="form-label mb-0">فلترة بالحالة:</label>

@@ -32,6 +32,24 @@ namespace RestaurantApp.Areas.Admin.Controllers
         }
 
         // Polled from Index.cshtml every few seconds to sound an alert when a new pending
+        // Two-step destructive action (confirm page, then the actual delete on POST) for
+        // wiping test orders before going live — never a single click. Cascades to
+        // OrderItems automatically (see ApplicationDbContext); never touches MenuItems,
+        // Categories, Customers, or Coupons.
+        public async Task<IActionResult> ClearAllConfirm()
+        {
+            ViewBag.OrderCount = await _context.Orders.CountAsync();
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearAll()
+        {
+            var count = await _context.Orders.ExecuteDeleteAsync();
+            TempData["Success"] = $"تم حذف {count} أوردر نهائيًا";
+            return RedirectToAction(nameof(Index));
+        }
         // order arrives. Returns the highest Pending order Id (not just a count) so the client
         // can tell "a new order arrived" apart from "an old one just got accepted" — a raw
         // count can't distinguish those two cases.
