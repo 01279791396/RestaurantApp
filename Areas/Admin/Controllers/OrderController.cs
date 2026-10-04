@@ -50,6 +50,26 @@ namespace RestaurantApp.Areas.Admin.Controllers
             TempData["Success"] = $"تم حذف {count} أوردر نهائيًا";
             return RedirectToAction(nameof(Index));
         }
+
+        // Same idea, but only the orders that never actually completed — Cancelled, or still
+        // stuck somewhere in Pending/Accepted/Preparing/OutForDelivery. Delivered orders (the
+        // real sales history) are always kept.
+        public async Task<IActionResult> ClearIncompleteConfirm()
+        {
+            ViewBag.OrderCount = await _context.Orders.CountAsync(o => o.Status != OrderStatus.Delivered);
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearIncomplete()
+        {
+            var count = await _context.Orders
+                .Where(o => o.Status != OrderStatus.Delivered)
+                .ExecuteDeleteAsync();
+            TempData["Success"] = $"تم حذف {count} أوردر (الملغي وغير المكتمل)، واتسيبت الأوردرات المُسلَّمة";
+            return RedirectToAction(nameof(Index));
+        }
         // order arrives. Returns the highest Pending order Id (not just a count) so the client
         // can tell "a new order arrived" apart from "an old one just got accepted" — a raw
         // count can't distinguish those two cases.
