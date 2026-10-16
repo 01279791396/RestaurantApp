@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "أرشفة الأوردرات غير المكتملة";
+    var count = (int)ViewBag.OrderCount;
+}
+
+<h1>أرشفة الأوردرات غير المكتملة</h1>
+
+<div class="alert alert-warning">
+    هيتم إخفاء <strong>@count أوردر</strong> من القايمة الأساسية — يعني كل أوردر حالته
+    <strong>مش "تم التسليم"</strong> (ملغي، قيد الانتظار، مقبول، جاري التحضير، أو مع مندوب التوصيل).
+    <br /><br />
+    <strong>ده مش حذف نهائي</strong> — الأوردرات دي هتفضل محفوظة، وتقدر تشوفها تاني في أي وقت من
+    "عرض الأرشيف"، أو ترجع أي واحدة منها للقايمة الأساسية.
+    <br /><br />
+    الأوردرات اللي "تم التسليم" مش هتتأثر خالص.
+</div>
+
+<form asp-action="ArchiveIncomplete" method="post">
+    <button type="submit" class="btn btn-warning">
+        أيوه، أرشف الـ @count أوردر دول
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+</form>

@@ -15,10 +15,11 @@ namespace RestaurantApp.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(OrderStatus? status)
+        public async Task<IActionResult> Index(OrderStatus? status, bool showArchived = false)
         {
             var query = _context.Orders
                 .Include(o => o.Customer)
+                .Where(o => o.IsArchived == showArchived)
                 .OrderByDescending(o => o.CreatedAt)
                 .AsQueryable();
 
@@ -28,6 +29,7 @@ namespace RestaurantApp.Areas.Admin.Controllers
             }
 
             ViewBag.SelectedStatus = status;
+            ViewBag.ShowArchived = showArchived;
             return View(await query.ToListAsync());
         }
 
@@ -51,25 +53,44 @@ namespace RestaurantApp.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Same idea, but only the orders that never actually completed — Cancelled, or still
-        // stuck somewhere in Pending/Accepted/Preparing/OutForDelivery. Delivered orders (the
-        // real sales history) are always kept.
-        public async Task<IActionResult> ClearIncompleteConfirm()
+        // Same idea as ClearAll, but reversible: orders that never actually completed
+        // (Cancelled, or still stuck in Pending/Accepted/Preparing/OutForDelivery) are
+        // archived — hidden from the main list — rather than deleted, so they can still be
+        // pulled back up later (e.g. a customer disputes a cancellation). Delivered orders
+        // (the real sales history) are never touched by this.
+        public async Task<IActionResult> ArchiveIncompleteConfirm()
         {
-            ViewBag.OrderCount = await _context.Orders.CountAsync(o => o.Status != OrderStatus.Delivered);
+            ViewBag.OrderCount = await _context.Orders
+                .CountAsync(o => o.Status != OrderStatus.Delivered && !o.IsArchived);
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ClearIncomplete()
+        public async Task<IActionResult> ArchiveIncomplete()
         {
             var count = await _context.Orders
-                .Where(o => o.Status != OrderStatus.Delivered)
-                .ExecuteDeleteAsync();
-            TempData["Success"] = $"تم حذف {count} أوردر (الملغي وغير المكتمل)، واتسيبت الأوردرات المُسلَّمة";
+                .Where(o => o.Status != OrderStatus.Delivered && !o.IsArchived)
+                .ExecuteUpdateAsync(s => s.SetProperty(o => o.IsArchived, true));
+            TempData["Success"] = $"تم أرشفة {count} أوردر (الملغي وغير المكتمل) — لسه موجودين، تقدر تشوفهم من \"عرض الأرشيف\"";
             return RedirectToAction(nameof(Index));
         }
+
+        // Pulls one order back out of the archive (or sends it there), from the archive list.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleArchive(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            order.IsArchived = !order.IsArchived;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = order.IsArchived ? "تم أرشفة الأوردر" : "تم إرجاع الأوردر من الأرشيف";
+            return RedirectToAction(nameof(Index), new { showArchived = order.IsArchived });
+        }
+
         // order arrives. Returns the highest Pending order Id (not just a count) so the client
         // can tell "a new order arrived" apart from "an old one just got accepted" — a raw
         // count can't distinguish those two cases.
@@ -77,8 +98,8 @@ namespace RestaurantApp.Areas.Admin.Controllers
         public async Task<IActionResult> PendingCount()
         {
             var pending = await _context.Orders
-                .Where(o => o.Status == OrderStatus.Pending)
-                .ToListAsync();
+                            .Where(o => o.Status == OrderStatus.Pending && !o.IsArchived)
+                            .ToListAsync();
 
             return Json(new
             {

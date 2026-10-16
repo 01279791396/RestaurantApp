@@ -2,18 +2,29 @@
 @{
     ViewData["Title"] = "الأوردرات";
     var selected = (OrderStatus?)ViewBag.SelectedStatus;
+    var showArchived = (bool)ViewBag.ShowArchived;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-    <h1 class="mb-0">الأوردرات</h1>
+    <h1 class="mb-0">@(showArchived ? "الأرشيف" : "الأوردرات")</h1>
     <div class="d-flex gap-2 flex-wrap">
-        <a asp-action="ClearIncompleteConfirm" class="btn btn-sm btn-outline-warning">🗑️ مسح الملغي وغير المكتمل</a>
-        <a asp-action="ClearAllConfirm" class="btn btn-sm btn-outline-danger">🗑️ مسح كل الأوردرات</a>
+        @if (showArchived)
+        {
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">⬅ رجوع للقايمة الأساسية</a>
+        }
+        else
+        {
+            <a asp-action="Index" asp-route-showArchived="true" class="btn btn-sm btn-outline-secondary">📦 عرض الأرشيف</a>
+            <a asp-action="ArchiveIncompleteConfirm" class="btn btn-sm btn-outline-warning">📦 أرشفة الملغي وغير المكتمل</a>
+            <a asp-action="ClearAllConfirm" class="btn btn-sm btn-outline-danger">🗑️ مسح كل الأوردرات</a>
+        }
     </div>
 </div>
-<form method="get" class="mb-3 d-flex gap-2 align-items-center">
+
+<form method="get" class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+    <input type="hidden" name="showArchived" value="@showArchived" />
     <label class="form-label mb-0">فلترة بالحالة:</label>
-    <select name="status" class="form-select" style="width:220px" onchange="this.form.submit()">
+    <select name="status" class="form-select" style="max-width:220px" onchange="this.form.submit()">
         <option value="">الكل</option>
         @foreach (OrderStatus s in Enum.GetValues(typeof(OrderStatus)))
         {
@@ -24,13 +35,13 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">لا يوجد أوردرات.</div>
+    <div class="alert alert-info">@(showArchived ? "الأرشيف فاضي." : "لا يوجد أوردرات.")</div>
 }
 else
 {
-    <div class="card p-3" >
-        <div class=" table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-            <table class="table align-middle mb-0" style="min-width: 700px;">
+    <div class="card p-3">
+        <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <table class="table mb-0 table-striped align-middle" style="min-width: 700px;">
                 <thead>
                     <tr>
                         <th>رقم الفاتورة</th>
@@ -56,12 +67,18 @@ else
                             </td>
                             <td>@(order.DeliveryPersonName ?? "-")</td>
                             <td>@order.CreatedAt.ToLocalTime().ToString("MM-dd HH:mm")</td>
-                            <td><a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">التفاصيل</a></td>
+                            <td class="text-nowrap">
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">التفاصيل</a>
+                                <form asp-action="ToggleArchive" asp-route-id="@order.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        @(showArchived ? "رجّعه" : "أرشفة")
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-  
     </div>
 }

@@ -25,7 +25,7 @@ namespace RestaurantApp.Areas.Admin.Controllers
 
             var vm = new AdminDashboardViewModel
             {
-                PendingOrdersCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Pending),
+                PendingOrdersCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Pending && !o.IsArchived),
                 TodayOrdersCount = await _context.Orders.CountAsync(o => o.CreatedAt >= todayStart),
                 TodayRevenue = await _context.Orders
                     .Where(o => o.CreatedAt >= todayStart && o.Status != OrderStatus.Cancelled)

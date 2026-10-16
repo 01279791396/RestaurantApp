@@ -40,6 +40,7 @@ namespace RestaurantApp.Models
 
         // Cash on delivery only for now — no payment gateway integration.
         public bool IsPaid { get; set; } = false;
+        public bool IsArchived { get; set; } = false;
 
         // Delivery is handled by phone call, not a delivery-staff account/login — the admin
         // calls someone and jots their name/phone here for the record. Null until the order
