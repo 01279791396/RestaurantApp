@@ -97,8 +97,6 @@ namespace RestaurantApp.Controllers
             }
             HttpContext.Session.SaveCart(cart);
             TempData["Success"] = $"تمت إضافة {displayName}{(sizeName != null ? " (" + sizeName + ")" : "")} للسلة";
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            return Json(new { count = /* إجمالي عدد الأصناف في السلة */ });
             return RedirectToAction("Index", "Menu");   // الرد العادي اللي عندك
         }
 
