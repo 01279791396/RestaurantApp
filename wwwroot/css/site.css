@@ -606,7 +606,10 @@ textarea.form-control {
         box-shadow: 0 -4px 16px rgba(120, 80, 20, .12);
         padding-bottom: env(safe-area-inset-bottom);
     }
-
+    .menu-hero {
+        background: radial-gradient(600px 300px at 50% -40%, rgba(255,255,255,.25), transparent 60%), linear-gradient(135deg, #8F6616 0%, #C8321E 100%) !important;
+        border: none !important;
+    }
         .mobile-bottom-bar a {
             flex: 1;
             text-align: center;

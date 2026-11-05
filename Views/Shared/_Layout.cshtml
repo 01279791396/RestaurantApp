@@ -38,12 +38,13 @@
                                 var cartCount = Context.Session.GetCart().Sum(i => i.Quantity);
                             }
                             <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">
-                                السلة
+                                السلة                      
                                 @if (cartCount > 0)
                                 {
                                     <span class="badge bg-warning text-dark">@cartCount</span>
                                 }
                             </a>
+                            <a asp-controller="Account" asp-action="Login"><i class="bi bi-person"></i>دخول</a>
                         </li>
                         @if (SignInManager.IsSignedIn(User))
                         {
