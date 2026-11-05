@@ -1,4 +1,4 @@
-const CACHE_NAME = 'restaurant-app-shell-v1';
+const CACHE_NAME = 'restaurant-app-shell-v2';
 const APP_SHELL = [
     '/manifest.json',
     '/css/site.css',
