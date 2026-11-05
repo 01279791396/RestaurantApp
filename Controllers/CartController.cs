@@ -31,6 +31,7 @@ namespace RestaurantApp.Controllers
         // that doesn't — Menu/Index only ever submits the form that matches the item's shape.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //private bool IsAjax() =>Request.Headers["X-Requested-With"] == "XMLHttpRequest";
         public async Task<IActionResult> Add(int menuItemId, int quantity = 1, int? sizeId = null)
         {
             if (quantity < 1) quantity = 1;
@@ -94,10 +95,11 @@ namespace RestaurantApp.Controllers
                     SizeName = sizeName
                 });
             }
-
             HttpContext.Session.SaveCart(cart);
             TempData["Success"] = $"تمت إضافة {displayName}{(sizeName != null ? " (" + sizeName + ")" : "")} للسلة";
-            return RedirectToAction("Index", "Menu");
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return Json(new { count = /* إجمالي عدد الأصناف في السلة */ });
+            return RedirectToAction("Index", "Menu");   // الرد العادي اللي عندك
         }
 
         [HttpPost]

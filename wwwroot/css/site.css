@@ -305,3 +305,305 @@ a:hover { color: var(--color-primary); }
     border: 1px solid var(--color-primary-dark);
     box-shadow: var(--shadow-warm), var(--shadow-glow);
 }
+:root {
+    --color-bg: #FFF8EC;
+    --color-surface: #FFFFFF;
+    --color-text: #2B1D10;
+    --color-muted: #7A6650;
+    --color-primary: #B8862B;
+    --color-primary-dark: #8F6616;
+    --color-accent: #C8321E;
+    --color-border: #EBDDC3;
+    --radius: 16px;
+    --shadow: 0 4px 18px rgba(120,80,20,.10);
+}
+
+body {
+    background: var(--color-bg) !important;
+    color: var(--color-text) !important;
+    font-family: 'Cairo', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* النافبار */
+.navbar {
+    background: #fff !important;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 2px 12px rgba(120,80,20,.08);
+}
+
+    .navbar .nav-link {
+        color: var(--color-text) !important;
+        font-weight: 600;
+    }
+
+        .navbar .nav-link:hover {
+            color: var(--color-primary) !important;
+        }
+
+.navbar-brand {
+    font-family: 'Aref Ruqaa', serif;
+    font-size: 1.7rem;
+    color: var(--color-primary-dark) !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+/* الكروت */
+.card, .menu-panel, .auth-card {
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow);
+}
+
+.menu-panel-header {
+    background: linear-gradient(135deg,#B8862B,#D9A544) !important;
+    color: #fff !important;
+    border-radius: var(--radius) var(--radius) 0 0;
+    font-family: 'Aref Ruqaa', serif;
+    font-size: 1.35rem;
+}
+
+.menu-hero {
+    background: linear-gradient(135deg,#8F6616,#C8321E) !important;
+    color: #fff !important;
+    border-radius: var(--radius);
+}
+
+/* الأزرار */
+.btn-primary, .btn-gold {
+    background: linear-gradient(135deg,#C8321E,#E2552F) !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(200,50,30,.25);
+}
+
+    .btn-primary:hover {
+        filter: brightness(1.05);
+    }
+
+.btn-outline-primary {
+    color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary) !important;
+    border-radius: 12px;
+}
+
+    .btn-outline-primary:hover {
+        background: var(--color-primary) !important;
+        color: #fff !important;
+    }
+
+/* الحقول */
+.form-control, .form-select {
+    background: #fff !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 12px;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--color-primary) !important;
+        box-shadow: 0 0 0 .2rem rgba(184,134,43,.2) !important;
+    }
+
+.form-label {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+/* الجداول */
+.table {
+    color: var(--color-text) !important;
+    --bs-table-bg: #fff;
+}
+
+    .table thead th {
+        background: #F6EBD3;
+        color: #5A4120;
+        border-color: var(--color-border);
+    }
+
+    .table td, .table th {
+        border-color: var(--color-border) !important;
+    }
+
+/* صفحات الدخول والتسجيل: أفتح مع علامة مائية خفيفة */
+.auth-page {
+    background: var(--color-bg) !important;
+}
+
+a {
+    color: var(--color-primary-dark);
+}
+
+.text-muted {
+    color: var(--color-muted) !important;
+}
+/* ========== الموبايل ========== */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* أي زر أو حقل لازم يكون سهل اللمس */
+.btn, .form-control, .form-select {
+    min-height: 44px;
+}
+
+@media (max-width: 767.98px) {
+
+    .container, .container-fluid {
+        padding-inline: 12px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    h2 {
+        font-size: 1.35rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.45rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: .7rem .5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    /* الهيرو */
+    .menu-hero {
+        padding: 18px 14px !important;
+        text-align: center;
+    }
+
+        .menu-hero h1 {
+            font-size: 1.5rem;
+        }
+
+    /* ركن المنيو: عمود واحد */
+    .menu-panel {
+        margin-bottom: 14px;
+    }
+
+    .menu-panel-header {
+        font-size: 1.2rem;
+        padding: 10px 14px;
+    }
+
+    /* كارت الصنف */
+    .menu-item-card, .menu-panel .card {
+        padding: 10px;
+    }
+
+        .menu-panel .card img {
+            height: 120px;
+            object-fit: cover;
+        }
+
+    .add-to-cart-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+        .add-to-cart-form .btn {
+            flex: 1;
+        }
+
+        .add-to-cart-form select, .add-to-cart-form input[type=number] {
+            max-width: 110px;
+        }
+
+    /* الجداول: خط أصغر وتمرير أفقي */
+    .table-responsive {
+        border-radius: 12px;
+        border: 1px solid var(--color-border);
+    }
+
+    .table {
+        font-size: .85rem;
+        white-space: nowrap;
+    }
+
+    /* الأزرار الطويلة بعرض كامل في الفورمات */
+    form .btn[type=submit] {
+        width: 100%;
+    }
+
+    /* كارت الدخول */
+    .auth-card {
+        margin: 12px;
+        padding: 18px !important;
+    }
+
+    /* مسافة تحت عشان الشريط السفلي ميغطيش المحتوى */
+    body {
+        padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ========== شريط سفلي للموبايل ========== */
+.mobile-bottom-bar {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .mobile-bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1040;
+        background: #fff;
+        border-top: 1px solid var(--color-border);
+        box-shadow: 0 -4px 16px rgba(120,80,20,.12);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+        .mobile-bottom-bar a {
+            flex: 1;
+            text-align: center;
+            padding: 8px 4px 6px;
+            color: var(--color-muted);
+            text-decoration: none;
+            font-size: .72rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+            .mobile-bottom-bar a i {
+                display: block;
+                font-size: 1.35rem;
+            }
+
+            .mobile-bottom-bar a.active, .mobile-bottom-bar a:hover {
+                color: var(--color-accent);
+            }
+
+        .mobile-bottom-bar .bar-badge {
+            position: absolute;
+            top: 2px;
+            left: calc(50% + 6px);
+            background: var(--color-accent);
+            color: #fff;
+            border-radius: 10px;
+            font-size: .65rem;
+            padding: 1px 6px;
+        }
+}
