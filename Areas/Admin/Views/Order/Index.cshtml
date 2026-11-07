@@ -3,9 +3,27 @@
     ViewData["Title"] = "الأوردرات";
     var selected = (OrderStatus?)ViewBag.SelectedStatus;
     var showArchived = (bool)ViewBag.ShowArchived;
+
+    string StatusText(OrderStatus s) => s switch
+    {
+        OrderStatus.Pending => "قيد الانتظار",
+        OrderStatus.Accepted => "تم القبول",
+        OrderStatus.Preparing => "جاري التحضير",
+        OrderStatus.OutForDelivery => "مع مندوب التوصيل",
+        OrderStatus.Delivered => "تم التسليم",
+        OrderStatus.Cancelled => "ملغي",
+        _ => s.ToString()
+    };
+    string BadgeClass(OrderStatus s) => s switch
+    {
+        OrderStatus.Pending => "bg-secondary",
+        OrderStatus.Delivered => "bg-success",
+        OrderStatus.Cancelled => "bg-danger",
+        _ => "bg-warning text-dark"
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h1 class="mb-0">@(showArchived ? "الأرشيف" : "الأوردرات")</h1>
     <div class="d-flex gap-2 flex-wrap">
         @if (showArchived)
@@ -28,7 +46,7 @@
         <option value="">الكل</option>
         @foreach (OrderStatus s in Enum.GetValues(typeof(OrderStatus)))
         {
-            <option value="@s" selected="@(selected == s)">@s</option>
+            <option value="@s" selected="@(selected == s)">@StatusText(s)</option>
         }
     </select>
 </form>
@@ -39,9 +57,35 @@
 }
 else
 {
-    <div class="card p-3">
-        <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-            <table class="table mb-0 table-striped align-middle" style="min-width: 700px;">
+    <div class="d-md-none">
+        @foreach (var order in Model)
+        {
+            <div class="card list-card">
+                <div class="list-card-head">
+                    <div>
+                        <div class="list-card-title">@order.InvoiceNumber</div>
+                        <div class="list-card-sub">@(order.Customer?.FullName ?? "-")</div>
+                    </div>
+                    <span class="badge @BadgeClass(order.Status)">@StatusText(order.Status)</span>
+                </div>
+                <dl class="list-card-meta">
+                    <div><dt>الإجمالي</dt><dd>@order.TotalPrice.ToString("0.00") ج.م</dd></div>
+                    <div><dt>التاريخ</dt><dd>@order.CreatedAt.ToLocalTime().ToString("MM-dd HH:mm")</dd></div>
+                    <div><dt>مندوب التوصيل</dt><dd>@(order.DeliveryPersonName ?? "-")</dd></div>
+                </dl>
+                <div class="list-card-actions">
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">التفاصيل</a>
+                    <form asp-action="ToggleArchive" asp-route-id="@order.Id" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">@(showArchived ? "رجّعه" : "أرشفة")</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card p-3 d-none d-md-block">
+        <div class="table-responsive">
+            <table class="table mb-0 table-striped align-middle no-stack">
                 <thead>
                     <tr>
                         <th>رقم الفاتورة</th>
@@ -60,19 +104,13 @@ else
                             <td>@order.InvoiceNumber</td>
                             <td>@order.Customer?.FullName</td>
                             <td class="fw-bold">@order.TotalPrice.ToString("0.00") ج.م</td>
-                            <td>
-                                <span class="badge @(order.Status == OrderStatus.Pending ? "bg-secondary" : order.Status == OrderStatus.Delivered ? "bg-success" : order.Status == OrderStatus.Cancelled ? "bg-danger" : "bg-warning text-dark")">
-                                    @order.Status
-                                </span>
-                            </td>
+                            <td><span class="badge @BadgeClass(order.Status)">@StatusText(order.Status)</span></td>
                             <td>@(order.DeliveryPersonName ?? "-")</td>
                             <td>@order.CreatedAt.ToLocalTime().ToString("MM-dd HH:mm")</td>
                             <td class="text-nowrap">
                                 <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">التفاصيل</a>
                                 <form asp-action="ToggleArchive" asp-route-id="@order.Id" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
-                                        @(showArchived ? "رجّعه" : "أرشفة")
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">@(showArchived ? "رجّعه" : "أرشفة")</button>
                                 </form>
                             </td>
                         </tr>
