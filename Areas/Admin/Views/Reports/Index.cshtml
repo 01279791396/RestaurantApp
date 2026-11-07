@@ -62,7 +62,7 @@
 else
 {
     @* phones: ranked cards *@
-    @{ var rankM = 1; }
+    var rankM = 1;
     <div class="d-md-none">
         @foreach (var item in Model.TopItems)
         {
@@ -80,30 +80,32 @@ else
     </div>
 
     <div class="card p-3 d-none d-md-block">
-    <div class="table-responsive">
-<table class="table mb-0 align-middle no-stack">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>الصنف</th>
-                <th>الكمية المباعة</th>
-                <th>المبيعات (ج.م)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ var rank = 1; }
-            @foreach (var item in Model.TopItems)
-            {
-                <tr>
-                    <td>@rank</td>
-                    <td>@item.Name</td>
-                    <td>@item.QuantitySold</td>
-                    <td>@item.Revenue.ToString("0.00")</td>
-                </tr>
-                rank++;
-            }
-        </tbody>
-    </table>
-</div>
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle no-stack">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الصنف</th>
+                        <th>الكمية المباعة</th>
+                        <th>المبيعات (ج.م)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var rank = 1;
+                    }
+                    @foreach (var item in Model.TopItems)
+                    {
+                        <tr>
+                            <td>@rank</td>
+                            <td>@item.Name</td>
+                            <td>@item.QuantitySold</td>
+                            <td>@item.Revenue.ToString("0.00")</td>
+                        </tr>
+                        rank++;
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
