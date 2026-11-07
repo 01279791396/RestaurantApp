@@ -8,9 +8,29 @@
     <a asp-action="Create" class="btn btn-primary">+ إضافة قسم</a>
 </div>
 
-<div class="card p-3">
-    <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <table class="table mb-0 table-striped align-middle" style="min-width: 700px;">
+@* phones: one card per category *@
+<div class="d-md-none">
+    @foreach (var category in Model)
+    {
+        <div class="card list-card">
+            <div class="list-card-head">
+                <div class="list-card-title">@category.Name</div>
+                <span class="badge bg-secondary">@category.MenuItems.Count صنف</span>
+            </div>
+            <dl class="list-card-meta">
+                <div><dt>ترتيب العرض</dt><dd>@category.DisplayOrder</dd></div>
+            </dl>
+            <div class="list-card-actions">
+                <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 table-striped align-middle no-stack">
     <thead>
         <tr>
             <th>الاسم</th>

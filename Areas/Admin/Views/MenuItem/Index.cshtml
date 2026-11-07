@@ -8,9 +8,63 @@
     <a asp-action="Create" class="btn btn-primary">+ إضافة صنف</a>
 </div>
 
-<div class="card p-3">
-    <div class=" table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <table class="table mb-0 table-striped align-middle" style="min-width: 700px;">
+@* phones: one card per menu item *@
+<div class="d-md-none">
+    @foreach (var item in Model)
+    {
+        <div class="card list-card">
+            <div class="list-card-head">
+                <div class="d-flex gap-2 align-items-center">
+                    <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/menu/placeholder.png" : "/images/menu/" + item.ImagePath)"
+                         class="list-card-thumb" alt="" loading="lazy" />
+                    <div>
+                        <div class="list-card-title">@item.Name</div>
+                        <div class="list-card-sub">@item.Category?.Name</div>
+                    </div>
+                </div>
+                @if (item.IsAvailable)
+                {
+                    <span class="badge bg-success">متاح</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">غير متاح</span>
+                }
+            </div>
+            <dl class="list-card-meta">
+                @if (item.HasSizes)
+                {
+                    <div><dt>المقاسات</dt><dd>@item.Sizes.Count مقاس</dd></div>
+                    <div><dt>السعر</dt><dd>من @item.Sizes.Min(s => s.Price).ToString("0.00") ج.م</dd></div>
+                }
+                else
+                {
+                    <div><dt>السعر</dt><dd>@item.Price.ToString("0.00") ج.م</dd></div>
+                    @if (item.DiscountedPrice.HasValue)
+                    {
+                        <div><dt>سعر العرض</dt><dd>@item.DiscountedPrice.Value.ToString("0.00") ج.م</dd></div>
+                    }
+                    @if (item.VipPrice.HasValue)
+                    {
+                        <div><dt>سعر المميز 👑</dt><dd>@item.VipPrice.Value.ToString("0.00") ج.م</dd></div>
+                    }
+                }
+            </dl>
+            <div class="list-card-actions">
+                <form asp-action="ToggleAvailability" asp-route-id="@item.Id" method="post">
+                    <button type="submit" class="btn btn-sm btn-outline-warning">@(item.IsAvailable ? "إخفاء" : "إظهار")</button>
+                </form>
+                <a asp-controller="MenuItemSize" asp-action="Index" asp-route-menuItemId="@item.Id" class="btn btn-sm btn-outline-primary">المقاسات</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 table-striped align-middle no-stack">
     <thead>
         <tr>
             <th>الصورة</th>

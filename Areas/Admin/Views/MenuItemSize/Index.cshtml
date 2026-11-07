@@ -18,9 +18,31 @@
 }
 else
 {
-    <div class="card p-3">
-         <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <table class="table mb-0 align-middle" style="min-width: 700px;">
+    @* phones: one card per size *@
+    <div class="d-md-none">
+        @foreach (var size in Model)
+        {
+            <div class="card list-card">
+                <div class="list-card-head">
+                    <div class="list-card-title">@size.Name</div>
+                    <span class="badge bg-warning text-dark">@size.Price.ToString("0.00") ج.م</span>
+                </div>
+                <dl class="list-card-meta">
+                    <div><dt>سعر الخصم</dt><dd>@(size.DiscountedPrice.HasValue ? size.DiscountedPrice.Value.ToString("0.00") + " ج.م" : "-")</dd></div>
+                    <div><dt>سعر العميل المميز</dt><dd>@(size.VipPrice.HasValue ? size.VipPrice.Value.ToString("0.00") + " ج.م 👑" : "-")</dd></div>
+                    <div><dt>ترتيب العرض</dt><dd>@size.DisplayOrder</dd></div>
+                </dl>
+                <div class="list-card-actions">
+                    <a asp-action="Edit" asp-route-id="@size.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                    <a asp-action="Delete" asp-route-id="@size.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 align-middle no-stack">
         <thead>
             <tr>
                 <th>المقاس</th>
@@ -48,7 +70,7 @@ else
             }
         </tbody>
     </table>
-    </div>
+</div>
     </div>
 }
 

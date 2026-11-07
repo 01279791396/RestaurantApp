@@ -14,9 +14,44 @@
 }
 else
 {
-    <div class="card p-3">
-        <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <table class="table mb-0 align-middle" style="min-width: 700px;">
+    @* phones: one card per coupon *@
+    <div class="d-md-none">
+        @foreach (var coupon in Model)
+        {
+            <div class="card list-card">
+                <div class="list-card-head">
+                    <div class="list-card-title"><code>@coupon.Code</code></div>
+                    @if (coupon.IsValidNow)
+                    {
+                        <span class="badge bg-success">فعّال</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">غير فعّال</span>
+                    }
+                </div>
+                <dl class="list-card-meta">
+                    <div><dt>النوع</dt><dd>@(coupon.DiscountType == DiscountType.Percentage ? "نسبة %" : "مبلغ ثابت")</dd></div>
+                    <div><dt>القيمة</dt><dd>@(coupon.DiscountType == DiscountType.Percentage ? $"{coupon.Value}%" : $"{coupon.Value:0.00} ج.م")</dd></div>
+                    <div><dt>الحد الأدنى</dt><dd>@(coupon.MinOrderAmount.HasValue ? $"{coupon.MinOrderAmount.Value:0.00} ج.م" : "-")</dd></div>
+                    <div><dt>تاريخ الانتهاء</dt><dd>@(coupon.ExpiresAt?.ToString("yyyy-MM-dd") ?? "بدون")</dd></div>
+                </dl>
+                <div class="list-card-actions">
+                    <form asp-action="ToggleActive" asp-route-id="@coupon.Id" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">@(coupon.IsActive ? "إيقاف" : "تفعيل")</button>
+                    </form>
+                    <a asp-action="Edit" asp-route-id="@coupon.Id" class="btn btn-sm btn-outline-secondary">تعديل</a>
+                    <form asp-action="Delete" asp-route-id="@coupon.Id" method="post" onsubmit="return confirm('متأكد من الحذف؟');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 align-middle no-stack">
         <thead>
             <tr>
                 <th>الكود</th>
@@ -60,6 +95,6 @@ else
             }
         </tbody>
     </table>
-    </div>
+</div>
     </div>
 }

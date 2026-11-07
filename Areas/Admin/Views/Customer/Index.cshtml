@@ -11,9 +11,42 @@
 }
 else
 {
-    <div class="card p-3">
-        <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <table class="table mb-0 align-middle" style="min-width: 700px;">
+    @* phones: one card per customer *@
+    <div class="d-md-none">
+        @foreach (var customer in Model)
+        {
+            <div class="card list-card">
+                <div class="list-card-head">
+                    <div>
+                        <div class="list-card-title">@customer.FullName</div>
+                        <div class="list-card-sub" dir="ltr">@customer.Email</div>
+                    </div>
+                    @if (customer.IsVip)
+                    {
+                        <span class="badge bg-dark">عميل مميز 👑</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">عادي</span>
+                    }
+                </div>
+                <dl class="list-card-meta">
+                    <div><dt>رقم الموبايل</dt><dd><a href="tel:@customer.PhoneNumber" dir="ltr">@customer.PhoneNumber</a></dd></div>
+                </dl>
+                <div class="list-card-actions">
+                    <form asp-action="ToggleVip" asp-route-id="@customer.Id" method="post">
+                        <button type="submit" class="btn btn-sm @(customer.IsVip ? "btn-outline-secondary" : "btn-outline-primary")">
+                            @(customer.IsVip ? "إلغاء التميز" : "خليه عميل مميز")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 align-middle no-stack">
         <thead>
             <tr>
                 <th>الاسم</th>
@@ -51,6 +84,6 @@ else
             }
         </tbody>
     </table>
-    </div>
+</div>
     </div>
 }

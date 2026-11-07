@@ -61,9 +61,27 @@
 }
 else
 {
-    <div class="card p-3">
-        <div class=" table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-            <table class="table align-middle mb-0" style="min-width: 700px;">
+    @* phones: ranked cards *@
+    @{ var rankM = 1; }
+    <div class="d-md-none">
+        @foreach (var item in Model.TopItems)
+        {
+            <div class="card list-card">
+                <div class="list-card-head">
+                    <div class="list-card-title">#@rankM &nbsp;@item.Name</div>
+                </div>
+                <dl class="list-card-meta">
+                    <div><dt>الكمية المباعة</dt><dd>@item.QuantitySold</dd></div>
+                    <div><dt>المبيعات (ج.م)</dt><dd>@item.Revenue.ToString("0.00")</dd></div>
+                </dl>
+            </div>
+            rankM++;
+        }
+    </div>
+
+    <div class="card p-3 d-none d-md-block">
+    <div class="table-responsive">
+<table class="table mb-0 align-middle no-stack">
         <thead>
             <tr>
                 <th>#</th>
@@ -86,6 +104,6 @@ else
             }
         </tbody>
     </table>
-    </div>
+</div>
     </div>
 }
