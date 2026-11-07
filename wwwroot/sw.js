@@ -1,7 +1,10 @@
+// Bump this number whenever css/js change so phones drop the old copies.
 const CACHE_NAME = 'restaurant-app-shell-v2';
 const APP_SHELL = [
     '/manifest.json',
     '/css/site.css',
+    '/js/cart.js',
+    '/js/site-mobile.js',
     '/icons/icon-192.png',
     '/icons/icon-512.png',
     '/offline.html'
@@ -50,8 +53,24 @@ self.addEventListener('fetch', function (event) {
         return;
     }
 
-    // Static assets (css, icons, manifest): cache-first, since these rarely change and this
-    // is what actually makes the shell load instantly / work offline.
+    // CSS and JS: network-first, so a new design shows up right after a deploy instead of
+    // being stuck on the old cached copy. The cache is only the offline fallback.
+    if (request.destination === 'style' || request.destination === 'script') {
+        event.respondWith(
+            fetch(request).then(function (response) {
+                if (response.ok) {
+                    var copy = response.clone();
+                    caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+                }
+                return response;
+            }).catch(function () {
+                return caches.match(request);
+            })
+        );
+        return;
+    }
+
+    // Other static assets (icons, images, manifest): cache-first.
     event.respondWith(
         caches.match(request).then(function (cached) {
             return cached || fetch(request).then(function (response) {

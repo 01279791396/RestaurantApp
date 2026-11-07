@@ -1,14 +1,13 @@
 @model MenuIndexViewModel
 @{
     ViewData["Title"] = "المنيو";
+    ViewData["Description"] = "منيو بابا المجال — أكلات شرقية وسورية: بيتزا، مشاوي، ساندوتشات وأكتر. اطلب أونلاين والدفع كاش عند الاستلام.";
 }
 
-<div class="menu-hero mb-4 text-center p-4" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/restaurant-bg.jpg') center/cover; border-radius: 12px; color: white;">
-    <!-- صورة الشعار أو الأيقونة فوق العنوان -->
-    <img src="~/icons/icon-192.png" alt="بابا المجال" style="width: 80px; height: 80px; object-fit: contain; border-radius: 50%; border: 2px solid #d4af37; margin-bottom: 15px;" />
-    
-    <div class="menu-hero-title fw-bold" style="font-size: 2rem; color: #d4af37;">بابا المجال</div>
-    <div class="menu-hero-sub mt-2" style="font-size: 1.1rem; opacity: 0.9;">مطعم أكلات شرقية وسورية — مذاق شرقي أصيل</div>
+<div class="menu-hero mb-3">
+    <img src="~/images/auth-bg.webp" class="menu-hero-logo" alt="بابا المجال" />
+    <div class="menu-hero-title">بابا المجال</div>
+    <div class="menu-hero-sub">مطعم أكلات شرقية وسورية — مذاق شرقي أصيل</div>
 </div>
 
 @if (!Model.IsOpen)
@@ -23,54 +22,67 @@
 {
     <div class="alert alert-info">لا يوجد أصناف متاحة حاليًا. برجاء المحاولة لاحقًا.</div>
 }
+else if (Model.Categories.Count > 1)
+{
+    <nav class="cat-chips" aria-label="أقسام المنيو">
+        @foreach (var chip in Model.Categories)
+        {
+            <a class="cat-chip" href="#cat-@chip.CategoryId">@chip.CategoryName</a>
+        }
+    </nav>
+}
 
 <div class="row">
     @foreach (var category in Model.Categories)
     {
         <div class="col-lg-6">
-            <div class="menu-panel">
+            <div class="menu-panel" id="cat-@category.CategoryId">
                 <div class="menu-panel-header">ركن @category.CategoryName</div>
                 <div class="menu-panel-body">
                     <div class="row g-3">
                         @foreach (var item in category.Items)
                         {
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="card h-100 menu-item-card">
-                                    <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/menu/placeholder.png" : "/images/menu/" + item.ImagePath)"
-                                         class="card-img-top" alt="@item.Name" />
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">@item.Name</h5>
-                                        @if (!string.IsNullOrEmpty(item.Description))
-                                        {
-                                            <p class="card-text text-muted small">@item.Description</p>
-                                        }
-                                        @{
-                                            var hasRating = Model.Ratings.TryGetValue(item.Id, out var rating);
-                                        }
-                                        @if (hasRating)
-                                        {
-                                            <div class="small mb-1" style="color:var(--color-accent-dark)">
-                                                ⭐ @rating.Average.ToString("0.0") <span class="text-muted">(@rating.Count تقييم)</span>
-                                            </div>
-                                        }
-                                        @{
-                                            var hasDiscount = !item.HasSizes && item.EffectivePriceFor(Model.IsVip) < item.Price;
-                                        }
-                                        @if (!item.HasSizes && Model.IsVip && item.VipPrice.HasValue)
-                                        {
-                                            <span class="badge bg-dark mb-1">سعر مميز 👑</span>
-                                        }
-                                        else if (!item.HasSizes && item.DiscountedPrice.HasValue)
-                                        {
-                                            <span class="badge bg-danger mb-1">عرض خاص</span>
-                                        }
+                                    <div class="mi-top">
+                                        <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/menu/placeholder.png" : "/images/menu/" + item.ImagePath)"
+                                             class="mi-img" alt="@item.Name" loading="lazy" />
+                                        <div class="mi-info">
+                                            <h5 class="mi-title">@item.Name</h5>
+                                            @if (!string.IsNullOrEmpty(item.Description))
+                                            {
+                                                <p class="mi-desc">@item.Description</p>
+                                            }
+                                            @{
+                                                var hasRating = Model.Ratings.TryGetValue(item.Id, out var rating);
+                                            }
+                                            @if (hasRating)
+                                            {
+                                                <div class="small mb-1" style="color:var(--color-accent-dark)">
+                                                    ⭐ @rating.Average.ToString("0.0") <span class="text-muted">(@rating.Count تقييم)</span>
+                                                </div>
+                                            }
+                                            @{
+                                                var hasDiscount = !item.HasSizes && item.EffectivePriceFor(Model.IsVip) < item.Price;
+                                            }
+                                            @if (!item.HasSizes && Model.IsVip && item.VipPrice.HasValue)
+                                            {
+                                                <span class="badge bg-dark mb-1">سعر مميز 👑</span>
+                                            }
+                                            else if (!item.HasSizes && item.DiscountedPrice.HasValue)
+                                            {
+                                                <span class="badge bg-danger mb-1">عرض خاص</span>
+                                            }
+                                        </div>
+                                    </div>
 
+                                    <div class="mi-bottom">
                                         @if (item.HasSizes)
                                         {
-                                            <form asp-controller="Cart" asp-action="Add" method="post" class="mt-auto">
+                                            <form asp-controller="Cart" asp-action="Add" method="post" class="add-to-cart-form">
                                                 <input type="hidden" name="menuItemId" value="@item.Id" />
                                                 <div class="d-flex flex-column gap-2">
-                                                    <select name="sizeId" class="form-select form-select-sm">
+                                                    <select name="sizeId" class="form-select" aria-label="المقاس">
                                                         @foreach (var size in item.Sizes.OrderBy(s => s.DisplayOrder))
                                                         {
                                                             var sizePrice = size.EffectivePriceFor(Model.IsVip);
@@ -78,8 +90,8 @@
                                                         }
                                                     </select>
                                                     <div class="d-flex align-items-center gap-2">
-                                                        <input type="number" name="quantity" value="1" min="1" max="20" class="form-control form-control-sm" style="width:56px" />
-                                                        <button type="submit" class="btn btn-sm btn-primary flex-grow-1">أضف للسلة</button>
+                                                        <button type="submit" class="btn btn-primary flex-grow-1">أضف للسلة</button>
+                                                        <input type="number" name="quantity" value="1" min="1" max="20" inputmode="numeric" class="form-control qty-input" aria-label="الكمية" />
                                                     </div>
                                                 </div>
                                             </form>
@@ -87,19 +99,19 @@
                                         else
                                         {
                                             var effectivePrice = item.EffectivePriceFor(Model.IsVip);
-                                            <div class="mt-auto d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                                <span>
+                                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                                <span class="mi-price">
                                                     @if (hasDiscount)
                                                     {
-                                                        <del class="text-muted small">@item.Price.ToString("0.00")</del>
+                                                        <del class="text-muted small fw-normal">@item.Price.ToString("0.00")</del>
                                                         <text> </text>
                                                     }
-                                                    <span class="fw-bold">@effectivePrice.ToString("0.00") ج.م</span>
+                                                    <span>@effectivePrice.ToString("0.00") ج.م</span>
                                                 </span>
-                                                <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex align-items-center gap-2">
+                                                <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex align-items-center gap-2 add-to-cart-form">
                                                     <input type="hidden" name="menuItemId" value="@item.Id" />
-                                                    <input type="number" name="quantity" value="1" min="1" max="20" class="form-control form-control-sm" style="width:56px" />
-                                                    <button type="submit" class="btn btn-sm btn-primary">أضف</button>
+                                                    <button type="submit" class="btn btn-primary">أضف</button>
+                                                    <input type="number" name="quantity" value="1" min="1" max="20" inputmode="numeric" class="form-control qty-input" aria-label="الكمية" />
                                                 </form>
                                             </div>
                                         }

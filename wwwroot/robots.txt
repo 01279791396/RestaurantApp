@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /Admin/
+Disallow: /Account/
+Disallow: /Cart
+Disallow: /Order
+Disallow: /Review
+Allow: /
+
+Sitemap: https://resturant-papa-elmagal.runasp.net/sitemap.xml

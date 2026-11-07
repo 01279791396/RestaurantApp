@@ -1,4 +1,4 @@
-﻿@model List<Review>
+@model List<Review>
 @{
     ViewData["Title"] = "التقييمات";
     var selected = (int?)ViewBag.SelectedRating;
@@ -6,22 +6,22 @@
     var total = (int)ViewBag.TotalCount;
 }
 
-<h1 class="mb-3">تقييمات العملاء</h1>
+<h1 class="page-title">تقييمات العملاء</h1>
 
-<div class="row g-3 mb-4">
-    <div class="col-md-3 col-6">
-        <div class="card text-center h-100">
+<div class="row g-2 g-md-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card text-center h-100 stat-card">
             <div class="card-body">
-                <div class="display-6">@avg.ToString("0.0")</div>
-                <div class="text-muted">متوسط التقييم العام</div>
+                <div class="display-6">@avg.ToString("0.0") ⭐</div>
+                <div class="text-muted small">متوسط التقييم العام</div>
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-6">
-        <div class="card text-center h-100">
+    <div class="col-6 col-md-3">
+        <div class="card text-center h-100 stat-card">
             <div class="card-body">
                 <div class="display-6">@total</div>
-                <div class="text-muted">إجمالي عدد التقييمات</div>
+                <div class="text-muted small">إجمالي عدد التقييمات</div>
             </div>
         </div>
     </div>
@@ -44,33 +44,28 @@
 }
 else
 {
-    <div class=" table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-    <div class="card p-3">
-    <table class="table align-middle mb-0" style="min-width: 700px;">
-        <thead>
-            <tr>
-                <th>الصنف</th>
-                <th>العميل</th>
-                <th>التقييم</th>
-                <th>التعليق</th>
-                <th>التاريخ</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var review in Model)
-            {
-                <tr>
-                    <td>@review.MenuItem?.Name</td>
-                    <td>@review.Customer?.FullName</td>
-                    <td>@(new string('⭐', review.Rating))</td>
-                    <td>@(string.IsNullOrEmpty(review.Comment) ? "-" : review.Comment)</td>
-                    <td>@review.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                    <td><a asp-action="Delete" asp-route-id="@review.Id" class="btn btn-sm btn-outline-danger">حذف</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    </div>
+    <div class="row">
+        @foreach (var review in Model)
+        {
+            <div class="col-12 col-lg-6">
+                <div class="card review-card">
+                    <div class="review-card-top">
+                        <div>
+                            <div class="fw-bold">@review.MenuItem?.Name</div>
+                            <div class="review-stars">@(new string('⭐', review.Rating))</div>
+                        </div>
+                        <a asp-action="Delete" asp-route-id="@review.Id" class="btn btn-sm btn-outline-danger">حذف</a>
+                    </div>
+                    @if (!string.IsNullOrEmpty(review.Comment))
+                    {
+                        <p class="review-comment">@review.Comment</p>
+                    }
+                    <div class="review-meta">
+                        <span>@(review.Customer?.FullName ?? "-")</span>
+                        <span>@review.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }
